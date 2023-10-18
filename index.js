@@ -1,5 +1,23 @@
 const express = require("express")
+const mongoose = require("mongoose")
+const { MONGO_URL } = require("./config")
+
+const { userRouter } = require("./routes/UserRoutes")
+const { videoRouter } = require("./routes/VideoRoutes")
 const app = express()
+
+mongoose.connect(MONGO_URL, {
+    useNewUrlParser: true,
+}).then(() => {
+    console.log("MongoDB connected")
+}).catch((err) => {
+    console.log(err)
+})
+
+app.use(express.json())
+
+app.use("/api/user", userRouter)
+app.use("/api/video", videoRouter)
 
 app.use(express.static("public"))
 
