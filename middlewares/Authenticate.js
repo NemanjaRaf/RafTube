@@ -55,9 +55,23 @@ const checkAccessComment = async (req, res, next) => {
     next();
 }
 
+const checkAccessPlaylist = async (req, res, next) => {
+    const user = req.user;
+    const playlist = await PlaylistService.getPlaylist(req.params.id);
+    if (!playlist) {
+        return res.status(404).json({ success: false, message: 'Playlist not found' });
+    }
+    if (user.role !== 'admin' && user._id !== playlist.author._id.toString()) {
+        return res.status(403).json({ success: false, message: 'Access denied' });
+    }
+
+    next();
+}
+
 module.exports = {
     Authenticate,
     checkAccess,
     checkAccessVideo,
     checkAccessComment,
+    checkAccessPlaylist
 };

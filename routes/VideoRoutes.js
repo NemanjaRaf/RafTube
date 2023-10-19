@@ -1,10 +1,88 @@
 const express = require('express');
+const multer = require('multer');
+const AWS = require('aws-sdk');
+const { v4: uuidv4 } = require('uuid');
+const ffmpeg = require('fluent-ffmpeg');
+const os = require('os');
+const path = require('path');
+const fs = require('fs');
+
 const VideoService = require('../services/VideoService');
 const { Authenticate, checkAccess, checkAccessVideo, checkAccessComment } = require('../middlewares/Authenticate');
 const validate = require("../middlewares/ValidateMiddleware")
 const VideoValidation = require('../validations/VideoValidation');
 
 const videoRouter = express.Router();
+
+const spacesEndpoint = new AWS.Endpoint('fra1.digitaloceanspaces.com'); // Change to your endpoint if different
+const s3 = new AWS.S3({
+    endpoint: spacesEndpoint,
+    accessKeyId: 'DO002TZ7CVBFLYK2KB6X',
+    secretAccessKey: 'wNfI7MmjkMN5A0gy/rh5+R/f4sRFwATnDb4efgY3Blo'
+});
+
+ffmpeg.setFfmpegPath(require('@ffmpeg-installer/ffmpeg').path);
+
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 50 * 1024 * 1024 // limit to 50MB
+    }
+});
+
+videoRouter.post('/upload', upload.single('video'), async (req, res) => {
+    if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+    }
+
+    const extension = req.file.originalname.split('.').pop();
+    const videoID = uuidv4();
+    const thumbnailPath = path.join(os.tmpdir(), `${videoID}.png`);
+
+    // Extract thumbnail
+    console.log(req.file.buffer);
+    ffmpeg()
+        .input('./public/videos/video1.mp4')
+        .screenshots({
+            timestamps: ['00:00.000'],
+            filename: thumbnailPath
+        })
+        .on('end', function() {
+            // Upload video to DO Spaces
+            const videoParams = {
+                Bucket: 'raftube',
+                Key: `videos/${videoID}.${extension}`,
+                Body: req.file.buffer,
+                ContentType: req.file.mimetype,
+                ACL: 'public-read'
+            };
+
+            s3.putObject(videoParams, (err, videoData) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({ success: false, message: err.message });
+                }
+
+                // Upload thumbnail to DO Spaces
+                const thumbnailParams = {
+                    Bucket: 'raftube',
+                    Key: `thumbnails/${videoID}.png`,
+                    Body: fs.readFileSync(thumbnailPath),
+                    ContentType: 'image/png',
+                    ACL: 'public-read'
+                };
+
+                s3.putObject(thumbnailParams, (err, thumbnailData) => {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({ success: false, message: err.message });
+                    }
+
+                    res.status(200).json({ success: true, data: { videoID } });
+                });
+            });
+        });
+});
 
 videoRouter.post('/create', Authenticate, validate(VideoValidation.createVideo), async (req, res) => {
     VideoService.createVideo(req).then((video) => {
