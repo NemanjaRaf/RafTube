@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+body {
+    background: #1c1c1c;
+    font-family: 'Roboto';
+    color: white;
+}
+
+.divider {
+    border-bottom: 1px solid #4d4d4d;
+    margin: 10px auto;
+    width: 90%;
+}
+
+.bg-dark {
+    background: #1c1c1c !important;
+    color: white;
+}
+
+.bg-light {
+    background: #262626 !important;
+    color: white;
+}
+.form-group label{
+    color: white;
+    margin-bottom: 10px;
+}
+.form-group .button {
+    border-radius: 0 10px 10px 0;
+    background: #262626;
+    color: white;
+    height: 44px;
+    width: 44px;
+}
+
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-group input::placeholder {
+    color: #bcbcbc;
+}
+
+.form-group input, .form-group textarea, .form-group select, .form-group input:focus, .form-group textarea:focus, .form-group select:focus{
+    background: #1c1c1c;
+    border: none;
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%;
+}
+
+.form-group.with-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-group.with-btn input {
+    border-radius: 10px 0 0 10px;
+    background: #101010;
+    outline: none;
+}
+
+.form-group.with-btn input:focus {
+    outline: none;
+}
+
+.ml-auto {
+    margin-left: auto;
+}
+
+.text-muted {
+    color: #bcbcbc !important;
+}
+
+.text-small {
+    font-size: 0.9em;
+}
+
+.text-smaller {
+    font-size: 0.8em;
+}
+
+.btn {
+    font-size: 0.9em;
+    border-radius: 10px;
+    padding: 5px 7px;
+    transition: background 0.2s ease-in-out;
+    text-align: center;
+    border: none;
+}
+
+.btn.btn-block {
+    width: 100%;
+}
+
+.btn.btn-primary {
+    background: #ff5252;
+    color: black;
+}
+
+.btn.btn-green {
+    background: #2ecc71;
+    color: black;
+}
+
+.btn.btn-blue {
+    background: #2b95ec;
+    color: black;
+}
+
+.btn.btn-gray {
+    background: #bcbcbc;
+    color: black;
+}
+
+.btn.btn-primary:hover {
+    color: black;
+    background: #d84545;
+}
+
+.btn.btn-muted {
+    background: #bcbcbc;
+    color: black;
+}
+
+.btn.btn-muted:hover {
+    color: black;
+    background: #4d4d4d;
+}
+
+.ml-1 {
+    margin-left: 1em;
+}
+.ml-2 {
+    margin-left: 2em;
+}
+.ml-3 {
+    margin-left: 3em;
+}
+.ml-4 {
+    margin-left: 4em;
+}
+.ml-5 {
+    margin-left: 5em;
+}

@@ -43,6 +43,11 @@ UserService.deleteUser = async (id) => {
     return true
 }
 
+UserService.listUsers = async (query) => {
+    const users = await User.find({})
+    return users
+}
+
 UserService.login = async (data) => {
     const user = await User.findOne({ email: data.email })
 
@@ -59,7 +64,7 @@ UserService.login = async (data) => {
         expiresIn: 86400,
     })
 
-    return token
+    return { token: token, user: user }
 }
 
 UserService.subscribeTo = async (to, from) => {

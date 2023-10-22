@@ -20,6 +20,23 @@ const Authenticate = async (req, res, next) => {
     }
 }
 
+const AuthenticateOptional = async (req, res, next) => {
+    let token = req.header('Authorization');
+    if (token) {
+        token = token.slice(7, token.length);
+    } else {
+        return next();
+    }
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded;
+        return next();
+    } catch (error) {
+        return next();
+    }
+    return next();
+}
+
 const checkAccess = async (req, res, next) => {
     const user = req.user;
     if (user.role !== 'admin' && user._id !== req.params.id) {
@@ -70,6 +87,7 @@ const checkAccessPlaylist = async (req, res, next) => {
 
 module.exports = {
     Authenticate,
+    AuthenticateOptional,
     checkAccess,
     checkAccessVideo,
     checkAccessComment,

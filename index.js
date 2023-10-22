@@ -1,4 +1,5 @@
 const express = require("express")
+const cors = require("cors")
 const mongoose = require("mongoose")
 const { MONGO_URL } = require("./config")
 
@@ -15,6 +16,7 @@ mongoose.connect(MONGO_URL, {
 })
 
 app.use(express.json())
+app.use(cors())
 
 app.use("/api/user", userRouter)
 app.use("/api/video", videoRouter)

@@ -16,6 +16,14 @@ userRouter.post("/create", validate(UserValidation.createUser), async (req, res)
     })
 })
 
+userRouter.get("/list", async (req, res) => {
+    UserService.listUsers().then((users) => {
+        res.status(200).json({ success: true, data: users })
+    }).catch((err) => {
+        res.status(500).json({ success: false, message: err.message })
+    })
+})
+
 userRouter.get("/:id", async (req, res) => {
     UserService.getUser(req.params.id).then((user) => {
         res.status(200).json({ success: true, data: user })

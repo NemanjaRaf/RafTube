@@ -18,6 +18,25 @@ VideoService.getVideo = async (id) => {
     return await Video.findById(id).populate('channel');
 }
 
+VideoService.viewVideo = async (id, data) => {
+    const video = await Video.findById(id);
+    if (!video) {
+        throw new Error('Video not found');
+    }
+
+    if (data.user) {
+        if (!video.views.includes(data.user._id)) {
+            video.views.push(data.user._id);
+            await video.save();
+        }
+    } else {
+        video.views.push('guest');
+        await video.save();
+    }
+
+    return video;
+}
+
 VideoService.updateVideo = async (id, data) => {
     const video = await Video.findByIdAndUpdate(id, { $set: data }, { new: true, runValidators: true });
 
@@ -89,19 +108,19 @@ VideoService.listVideos = async (query = "", limit = 10) => {
             { title: { $regex: query, $options: 'i' } },
             { description: { $regex: query, $options: 'i' } },
         ]
-    }).limit(limit).populate('channel');
+    }).sort({createdAt: -1}).limit(limit).populate('channel');
 
     return videos;
 }
 
 VideoService.listVideosByChannel = async (id) => {
-    const videos = await Video.find({ channel: id }).populate('channel');
+    const videos = await Video.find({ channel: id }).sort({createdAt: -1}).populate('channel');
 
     return videos;
 }
 
 VideoService.listVideosBySubscriptions = async (id) => {
-    const videos = await Video.find({ channel: { $in: id } }).populate('channel');
+    const videos = await Video.find({ channel: { $in: id } }).sort({createdAt: -1}).populate('channel');
 
     return videos;
 }
@@ -136,6 +155,23 @@ VideoService.removeComment = async (commentId) => {
 
 VideoService.updateComment = async (commentId, data) => {
     await CommentService.updateComment(commentId, data);
+}
+
+VideoService.listComments = async (id) => {
+    const video = await Video.findById(id).populate({
+        path: 'comments',
+        options: { sort: { createdAt: -1 } }, // add this line to sort by createdAt in descending order
+        populate: {
+            path: 'author',
+            model: 'User'
+        }
+    });
+
+    if (!video) {
+        throw new Error('Video not found');
+    }
+
+    return video.comments;
 }
 
 

@@ -7,18 +7,20 @@ const os = require('os');
 const path = require('path');
 const fs = require('fs');
 
+
+const { SPACES_ACCESS, SPACES_SECRET, SPACES_ENDPOINT } = require('../config');
 const VideoService = require('../services/VideoService');
-const { Authenticate, checkAccess, checkAccessVideo, checkAccessComment } = require('../middlewares/Authenticate');
+const { Authenticate, checkAccess, checkAccessVideo, checkAccessComment, AuthenticateOptional } = require('../middlewares/Authenticate');
 const validate = require("../middlewares/ValidateMiddleware")
 const VideoValidation = require('../validations/VideoValidation');
 
 const videoRouter = express.Router();
 
-const spacesEndpoint = new AWS.Endpoint('fra1.digitaloceanspaces.com'); // Change to your endpoint if different
-const s3 = new AWS.S3({
+const spacesEndpoint = new AWS.Endpoint(SPACES_ENDPOINT); // Change to your endpoint if different
+const s3 = new AWS.S3({ 
     endpoint: spacesEndpoint,
-    accessKeyId: 'DO002TZ7CVBFLYK2KB6X',
-    secretAccessKey: 'wNfI7MmjkMN5A0gy/rh5+R/f4sRFwATnDb4efgY3Blo'
+    accessKeyId: SPACES_ACCESS,
+    secretAccessKey: SPACES_SECRET
 });
 
 ffmpeg.setFfmpegPath(require('@ffmpeg-installer/ffmpeg').path);
@@ -39,16 +41,16 @@ videoRouter.post('/upload', upload.single('video'), async (req, res) => {
     const videoID = uuidv4();
     const thumbnailPath = path.join(os.tmpdir(), `${videoID}.png`);
 
-    // Extract thumbnail
-    console.log(req.file.buffer);
+    // save req.file.buffer to temp folder
+    fs.writeFileSync(path.join(os.tmpdir(), `${videoID}.${extension}`), req.file.buffer);
+
     ffmpeg()
-        .input('./public/videos/video1.mp4')
+        .input(path.join(os.tmpdir(), `${videoID}.${extension}`))
         .screenshots({
-            timestamps: ['00:00.000'],
+            timestamps: ['00:01.000'],
             filename: thumbnailPath
         })
         .on('end', function() {
-            // Upload video to DO Spaces
             const videoParams = {
                 Bucket: 'raftube',
                 Key: `videos/${videoID}.${extension}`,
@@ -63,7 +65,6 @@ videoRouter.post('/upload', upload.single('video'), async (req, res) => {
                     return res.status(500).json({ success: false, message: err.message });
                 }
 
-                // Upload thumbnail to DO Spaces
                 const thumbnailParams = {
                     Bucket: 'raftube',
                     Key: `thumbnails/${videoID}.png`,
@@ -78,7 +79,12 @@ videoRouter.post('/upload', upload.single('video'), async (req, res) => {
                         return res.status(500).json({ success: false, message: err.message });
                     }
 
-                    res.status(200).json({ success: true, data: { videoID } });
+                    res.status(200).json({ success: true, data: {
+                        videoID: videoID,
+                        videoExtension: extension,
+                        video: `https://raftube.fra1.digitaloceanspaces.com/videos/${videoID}.${extension}`,
+                        thumbnail: `https://raftube.fra1.digitaloceanspaces.com/thumbnails/${videoID}.png`
+                    } });
                 });
             });
         });
@@ -107,6 +113,7 @@ videoRouter.put('/:id', Authenticate, checkAccessVideo, validate(VideoValidation
         res.status(500).json({ success: false, message: err.message });
     });
 });
+
 
 videoRouter.delete('/:id', Authenticate, checkAccessVideo, async (req, res) => {
     VideoService.deleteVideo(req.params.id).then((video) => {
@@ -164,6 +171,14 @@ videoRouter.get("/subscriptions/", Authenticate, async (req, res) => {
     })
 })
 
+videoRouter.get("/comment/:id", async (req, res) => {
+    VideoService.listComments(req.params.id).then((comment) => {
+        res.status(200).json({ success: true, data: comment })
+    }).catch((err) => {
+        res.status(500).json({ success: false, message: err.message })
+    })
+})
+
 videoRouter.post("/comment/:id", Authenticate, validate(VideoValidation.comment), async (req, res) => {
     VideoService.addComment(req.params.id, req).then((comment) => {
         res.status(200).json({ success: true, data: comment })
@@ -186,6 +201,15 @@ videoRouter.delete("/comment/:id", Authenticate, checkAccessComment, async (req,
     }).catch((err) => {
         res.status(500).json({ success: false, message: err.message })
     })
+})
+videoRouter.post('/view/:id', AuthenticateOptional, async (req, res) => {
+    VideoService.viewVideo(req.params.id, req).then((video) => {
+        console.log(video);
+        res.status(200).json({ success: true, data: video });
+    }).catch((err) => {
+        console.log(err);
+        res.status(500).json({ success: false, message: err.message });
+    });
 })
 
 
