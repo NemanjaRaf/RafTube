@@ -4,7 +4,7 @@ const PlaylistValidation = new Object();
 
 PlaylistValidation.createPlaylist = Joi.object({
     title: Joi.string().min(3).max(100).required(),
-    description: Joi.string().max(500).required(),
+    description: Joi.string().max(500).optional(),
 });
 
 PlaylistValidation.updatePlaylist = Joi.object({

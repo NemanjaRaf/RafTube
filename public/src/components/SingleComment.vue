@@ -13,7 +13,7 @@
                         <span class="author text-muted text-small">{{ data.author.username }}</span>
                         <span class="text-muted text-small"> • </span>
                         <span class="date text-muted text-smaller" style="text-align:right">{{ timeAgo(data.createdAt) }}</span>
-                        <span class="text-muted text-small" style="float:right">
+                        <span class="text-muted text-small ml-1">
                             <font-awesome-icon :icon="['fas', 'ellipsis-vertical']" />
                         </span>
                     </span>

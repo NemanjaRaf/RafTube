@@ -3,16 +3,17 @@
         <div class="row">
             <div class="col-12 d-flex channel">
                 <div class="logo">
-                    <img src="https://ui-avatars.com/api/?name=Mita+Balija&background=random" alt="">
+                    <img :src="'https://ui-avatars.com/api/?name='+user.username+'&background=random'" alt="">
                 </div>
 
                 <div class="channel-name">
-                    <h3>Channel Name</h3>
-                    <p>100k subscribers</p>
+                    <h3>{{ user.username }}</h3>
+                    <p>{{ user.subscribers.length }} Subscriber{{ user.subscribers.length == 1 ? '' : 's' }}</p>
                 </div>
 
                 <div class="subscribe-btn">
-                    <button class="btn btn-danger">Subscribe</button>
+                    <button class="btn btn-danger" v-if="!subscribed" @click="subscribe">Subscribe</button>
+                    <button class="btn btn-gray" v-if="subscribed" @click="unsubscribe">Unsubscribe</button>
                 </div>
             </div>
         </div>
@@ -20,9 +21,20 @@
         <div class="divider mt-2 mb-4"></div>
 
         <div class="row">
-            <div class="col-12">
+            <div class="col-8">
                 <div class="row">
-                    <video-preview v-for="i in 10" :key="i" :small="true"></video-preview>
+                    <video-preview v-for="v in videos" :key="v._id" :col="'col-4'" :data="v"></video-preview>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card bg-light p-3">
+                    <h4>Playlists</h4>
+                    <div class="divider"></div>
+                    <div class="row">
+                        <div class="col-12">
+                            <playlist-preview v-for="p in playlists" :key="p._id" :data="p"></playlist-preview>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -30,11 +42,109 @@
 </template>
 
 <script>
+import axios from 'axios'
 import PageTemplate from './PageTemplate.vue'
 import VideoPreview from '../components/VideoPreview.vue'
+import PlaylistPreview from '../components/PlaylistPreview.vue'
 export default {
-  components: { PageTemplate, VideoPreview },
-    name: 'HomePage',
+    components: { PageTemplate, VideoPreview, PlaylistPreview },
+    name: 'ChannelPage',
+    data() {
+        return {
+            videos: [],
+            user: {},
+            user_id: "",
+            subscribed: false,
+            playlists: []
+        }
+    },
+    methods: {
+        getVideos() {
+            axios.get(this.API_URL +  '/video/channel/' + this.user_id)
+                .then(res => {
+                    console.log('data', res.data.data)
+                    this.videos = res.data.data
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        },
+        getUser() {
+            axios.get(this.API_URL + '/user/' + this.user_id)
+                .then(res => {
+                    this.user = res.data.data
+
+                    const u = JSON.parse(localStorage.getItem('user'))
+                    if (u) {
+                        this.subscribed = this.user.subscribers.includes(u._id)
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        },
+        getPlaylists() {
+            axios.get(this.API_URL +  '/playlist/list/' + this.user_id)
+                .then(res => {
+                    this.playlists = res.data.data
+                    console.log('playlists', this.playlists)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        },
+        subscribe() {
+            axios.post(this.API_URL + '/user/subscribe/' + this.user_id, {}, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(() => {
+                this.getUser()
+            })
+            .catch(err => {
+                this.$store.dispatch('showToast', { message: err.response.data.message, type: 'error' });
+            })
+        },
+        unsubscribe() {
+            axios.post(this.API_URL + '/user/unsubscribe/' + this.user_id, {}, {
+                headers:{
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(() => {
+                this.getUser()
+            })
+            .catch(err => {
+                this.$store.dispatch('showToast', { message: err.response.data.message, type: 'error' });
+            })
+        }
+    },
+    created() {
+        if (this.$route.params.id) {
+            this.user_id = this.$route.params.id
+        } else {
+            const u = JSON.parse(localStorage.getItem('user'))
+            if (!u) {
+                this.$router.push('/')
+                return;
+            }
+            this.user_id = u._id
+        }
+
+        this.getUser()
+
+        this.getVideos()
+        this.getPlaylists()
+    },
+    watch: {
+        '$route.params.id': function () {
+            this.user_id = this.$route.params.id
+            this.getUser()
+            this.getVideos()
+            this.getPlaylists()
+        }
+    }
 }
 </script>
 
@@ -47,7 +157,6 @@ export default {
     overflow: hidden;
     border-radius: 50px;
     height: 60px;
-    background: red;
     display: inline-block;
     margin-right: 10px;
 }

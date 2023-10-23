@@ -7,10 +7,36 @@ const {Authenticate, checkAccessPlaylist } = require("../middlewares/Authenticat
 const playlistRouter = express.Router()
 
 playlistRouter.post("/create", Authenticate, validate(PlaylistValidation.createPlaylist), async (req, res) => {
+    console.log(req)
     PlaylistService.createPlaylist(req).then((playlist) => {
         res.status(200).json({ success: true, data: playlist })
     })
     .catch((err) => {
+        res.status(500).json({ success: false, message: err.message })
+    })
+})
+
+playlistRouter.get("/list", Authenticate, async (req, res) => {
+    console.log('id', req.user._id)
+    PlaylistService.listPlaylists(req.user._id).then((playlists) => {
+        res.status(200).json({ success: true, data: playlists })
+    }).catch((err) => {
+        res.status(500).json({ success: false, message: err.message })
+    })
+})
+
+playlistRouter.get("/list/:id", async (req, res) => {
+    PlaylistService.listPlaylists(req.params.id).then((playlists) => {
+        res.status(200).json({ success: true, data: playlists })
+    }).catch((err) => {
+        res.status(500).json({ success: false, message: err.message })
+    })
+})
+
+playlistRouter.get("/list/following", Authenticate, async (req, res) => {
+    PlaylistService.listFollowedPlaylists(req.user._id).then((playlists) => {
+        res.status(200).json({ success: true, data: playlists })
+    }).catch((err) => {
         res.status(500).json({ success: false, message: err.message })
     })
 })
@@ -77,21 +103,6 @@ playlistRouter.post("/unfollow/:id", Authenticate, async (req, res) => {
         res.status(500).json({ success: false, message: err.message })
     })
 })
-
-playlistRouter.get("/list", Authenticate, async (req, res) => {
-    PlaylistService.listPlaylists(red.user._id).then((playlists) => {
-        res.status(200).json({ success: true, data: playlists })
-    }).catch((err) => {
-        res.status(500).json({ success: false, message: err.message })
-    })
-})
-
-playlistRouter.get("/list/following", Authenticate, async (req, res) => {
-    PlaylistService.listFollowedPlaylists(req.user._id).then((playlists) => {
-        res.status(200).json({ success: true, data: playlists })
-    }).catch((err) => {
-        res.status(500).json({ success: false, message: err.message })
-    })
-})
-
-module.exports = playlistRouter
+module.exports = {
+    playlistRouter
+};

@@ -4,11 +4,14 @@ const PlaylistService = new Object()
 
 PlaylistService.createPlaylist = async (data) => {
     const playlist = new Playlist({
-        title: data.body.name,
+        title: data.body.title,
         description: data.body.description,
         author: data.user._id,
     })
-    return await playlist.save()
+
+    await playlist.save()
+
+    return await Playlist.find({ author: data.user._id }).populate("author")
 }
 
 PlaylistService.updatePlaylist = async (id, data) => {
@@ -32,7 +35,14 @@ PlaylistService.deletePlaylist = async (id) => {
 }
 
 PlaylistService.getPlaylist = async (id) => {
-    return await Playlist.findById(id).populate("author")
+    
+    return await Playlist.findById(id).populate("author").populate({
+        path: "videos",
+        populate: {
+            path: "channel",
+            model: "User",
+        },
+    })
 }
 
 PlaylistService.addVideo = async (id, videoId) => {
@@ -96,6 +106,7 @@ PlaylistService.unfollow = async (id, userId) => {
 }
 
 PlaylistService.listPlaylists = async (id) => {
+    console.log(id)
     return await Playlist.find({ author: id }).populate("author")
 }
 

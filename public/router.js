@@ -7,6 +7,7 @@ const HomePage = () => import('@/pages/HomePage.vue');
 const Upload = () => import('@/pages/UploadPage.vue');
 const Channel = () => import('@/pages/ChannelPage.vue');
 const VideoPage = () => import('@/pages/VideoPage.vue');
+const PlaylistPage = () => import('@/pages/PlaylistPage.vue');
 const NotFound = () => import('@/pages/NotFound.vue');
 const AdminHome = () => import('@/pages/admin/AdminHome.vue');
 const AdminUsers = () => import('@/pages/admin/AdminUsers.vue');
@@ -23,7 +24,9 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/upload', component: Upload },
   { path: '/channel', component: Channel },
+  { path: '/channel/:id', component: Channel },
   { path: '/video/:id', component: VideoPage, props: true },
+  { path: '/playlist/:id', component: PlaylistPage, props: true },
   { path: '/admin', component: AdminHome },
   { path: '/admin/users', component: AdminUsers },
   { path: '/admin/users/add', component: AdminAddUser },
@@ -37,6 +40,24 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    return next();
+  }
+
+  const decoded = JSON.parse(atob(token.split('.')[1]));
+  const time = new Date().getTime() / 1000;
+  if (decoded.exp < time) {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+  }
+
+  next();
 });
 
 export default router;

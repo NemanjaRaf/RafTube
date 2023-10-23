@@ -5,6 +5,7 @@ const { MONGO_URL } = require("./config")
 
 const { userRouter } = require("./routes/UserRoutes")
 const { videoRouter } = require("./routes/VideoRoutes")
+const { playlistRouter } = require("./routes/PlaylistRoutes")
 const app = express()
 
 mongoose.connect(MONGO_URL, {
@@ -20,6 +21,7 @@ app.use(cors())
 
 app.use("/api/user", userRouter)
 app.use("/api/video", videoRouter)
+app.use("/api/playlist", playlistRouter)
 
 app.use(express.static("public"))
 

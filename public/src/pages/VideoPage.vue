@@ -10,9 +10,12 @@
                     </div>
 
                     <div class="col-12 mt-3">
-                        <h5>{{ video.title }}</h5>
-                    
                         <div class="d-flex justify-content-between align-items-center">
+                            <h5>{{ video.title }}</h5>
+                            <div class="btn btn-blue btn-small" @click="libraryModal = true">Save video</div>
+                        </div>
+                    
+                        <div class="d-flex justify-content-between align-items-center mt-1">
                             <div class="views">{{ video.views.length }} views • {{ timeAgo(video.createdAt) }}</div>
                             <div class="likes">
                                 <font-awesome-icon :class="liked" @click="like" :icon="['fas', 'fa-thumbs-up']" /> {{ likes.length }}
@@ -27,8 +30,8 @@
                                 <div class="logo">
                                     <img :src="'https://ui-avatars.com/api/?name='+video.channel.username+'&background=random'" alt="">
                                 </div>
-                                <div class="name">
-                                    <div class="title">{{ video.channel.username }}</div>
+                                <div class="name-page">
+                                    <router-link class="title" :to="'/channel/' + video.channel._id">{{ video.channel.username }}</router-link>
                                     <div class="subscribers text-muted text-small">{{ video.channel.subscribers.length }} Subscribers</div>
                                 </div>
                             </div>
@@ -56,6 +59,8 @@
                 </div>
             </div>
         </div>
+
+        <library-modal :show="libraryModal" @close="libraryModal = false"></library-modal>
     </page-template>
 </template>
 
@@ -65,6 +70,7 @@ import PageTemplate from './PageTemplate.vue'
 import VideoPreview from '../components/VideoPreview.vue'
 import VideoPlayer from '../components/VideoPlayer.vue'
 import CommentSection from '../components/CommentSection.vue'
+import LibraryModal from '../components/LibraryModal.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
@@ -72,7 +78,7 @@ import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 library.add(faThumbsUp, faThumbsDown);
 
 export default {
-    components: { PageTemplate, VideoPreview, VideoPlayer, CommentSection, FontAwesomeIcon },
+    components: { PageTemplate, VideoPreview, VideoPlayer, CommentSection, FontAwesomeIcon, LibraryModal },
     name: 'VideoPage',
     data() {
         return {
@@ -84,7 +90,8 @@ export default {
             dislikes: [],
             updater: 0,
 
-            subscribed: false
+            subscribed: false,
+            libraryModal: false,
         }
     },
     methods: {
@@ -200,7 +207,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .content {
     height: 100vh;
     overflow-y: auto;
@@ -210,7 +217,6 @@ export default {
     overflow: hidden;
     border-radius: 50px;
     height: 35px;
-    background: red;
     display: inline-block;
     margin-right: 10px;
 }
@@ -242,7 +248,6 @@ export default {
     overflow: hidden;
     border-radius: 50px;
     height: 35px;
-    background: red;
 }
 
 .comment .logo img {
@@ -253,7 +258,6 @@ export default {
     overflow: hidden;
     border-radius: 50px;
     height: 40px;
-    background: red;
     display: inline-block;
     margin-right: 10px;
 }
@@ -262,11 +266,15 @@ export default {
     height: 100%;
 }
 
-.channel .name {
+.channel .name-page {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     line-height: 1.1rem;
+}
+
+.channel .name-page a {
+    color: white;
+    text-decoration: none;
 }
 
 .channel .subscribe-btn {

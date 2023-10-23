@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config');
 const VideoService = require('../services/VideoService');
 const CommentService = require('../services/CommentService');
+const PlaylistService = require('../services/PlaylistService');
 
 const Authenticate = async (req, res, next) => {
     let token = req.header('Authorization');

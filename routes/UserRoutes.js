@@ -77,6 +77,24 @@ userRouter.post("/unsubscribe/:id", Authenticate, async (req, res) => {
     })
 })
 
+userRouter.get("/subscriptions/:id", async (req, res) => {
+    UserService.listSubscriptions(req.params.id).then((users) => {
+        res.status(200).json({ success: true, data: users })
+    })
+    .catch((err) => {
+        res.status(500).json({ success: false, message: err.message })
+    })
+})
+
+userRouter.get("/subscribers/:id", async (req, res) => {
+    UserService.listSubscibers(req.params.id).then((users) => {
+        res.status(200).json({ success: true, data: users })
+    })
+    .catch((err) => {
+        res.status(500).json({ success: false, message: err.message })
+    })
+})
+
 userRouter.post("/login", validate(UserValidation.login), async (req, res) => {
     UserService.login(req.body).then((token) => {
         res.status(200).json({ success: true, data: token })

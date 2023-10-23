@@ -21,7 +21,22 @@ Vue.mixin({
   data() {
     return {
       API_URL: 'http://localhost:3000/api',
-      CLOUD_URL: 'https://raftube.fra1.cdn.digitaloceanspaces.com/'
+      CLOUD_URL: 'https://raftube.fra1.cdn.digitaloceanspaces.com/',
+      isLoggedIn: function () {
+        const token = localStorage.getItem('token');
+        if (!token) return null;
+
+        const decoded = JSON.parse(window.atob(token.split('.')[1]));
+        if (!decoded) return null;
+
+        if (decoded.exp < (Date.now() / 1000)) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          return null;
+        }
+
+        return decoded
+      }
     }
   }
 })

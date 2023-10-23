@@ -91,4 +91,42 @@ export default {
 </script>
 
 <style>
+.comments .card {
+    border: none;
+}
+
+.comment .text {
+    padding: 0 10px;
+    font-size: 0.9em;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.comment .logo {
+    overflow: hidden;
+    border-radius: 50px;
+    height: 35px;
+}
+
+.comment .logo img {
+    height: 100%;
+}
+.comment-input .logo {
+    overflow: hidden;
+    border-radius: 50px;
+    height: 35px;
+    display: inline-block;
+    margin-right: 10px;
+}
+.comment-input .logo img {
+    height: 100%;
+}
+
+.w-100 {
+    width: 100%;
+}
 </style>

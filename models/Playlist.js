@@ -9,7 +9,6 @@ const PlaylistSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
         min: 3,
         max: 100,
     },
@@ -24,7 +23,7 @@ const PlaylistSchema = new mongoose.Schema({
     },
     videos: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Video",
+        ref: "Videos",
     }],
 }, { timestamps: true })
 

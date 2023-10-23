@@ -97,4 +97,19 @@ UserService.unsubscribeFrom = async (to, from) => {
     return false
 }
 
+UserService.listSubscibers = async (id) => {
+    const user = await User.findById(id).populate("subscribers")
+
+    if (!user) {
+        throw new Error("User not found")
+    }
+
+    return user.subscribers
+}
+
+UserService.listSubscriptions = async (id) => {
+    const users = await User.find({ subscribers: id })
+    return users
+}
+
 module.exports = UserService

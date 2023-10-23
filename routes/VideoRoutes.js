@@ -157,7 +157,7 @@ videoRouter.get("/search/:limit", async (req, res) => {
 
 videoRouter.get("/channel/:id", async (req, res) => {
     VideoService.listVideosByChannel(req.params.id).then((videos) => {
-        res.status(200).json({ success: true, data: videos })
+        res.status(200).json({ success: true, data: videos }) 
     }).catch((err) => {
         res.status(500).json({ success: false, message: err.message })
     })
