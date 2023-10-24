@@ -57,7 +57,7 @@ export default {
     },
     methods: {
         createUser() {
-            axios.post('http://localhost:3000/api/user/create', {
+            axios.post(this.API_URL + '/user/create', {
                 username: this.username,
                 email: this.email,
                 password: this.password

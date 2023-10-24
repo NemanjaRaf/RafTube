@@ -245,6 +245,25 @@ a {
   object-fit: fill;
   border-radius: 10px;
 }
+
+
+.video-preview.small .thumbnail img {
+  width: 100%;
+  height: 150px;
+  object-fit: fill;
+}
+
+.video-preview.horizontal .thumbnail img {
+  width: 100%;
+  height: 150px;
+  object-fit: fill;
+}
+.video-preview .thumbnail img {
+  width: 100%;
+  height: 200px;
+  object-fit: fill;
+  border-radius: 10px;
+}
 .video-preview .meta {
   width: 100%;
   color: white;

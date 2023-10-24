@@ -16,7 +16,7 @@ UserService.createUser = async (data) => {
 }
 
 UserService.getUser = async (id) => {
-    const user = await User.findById(id)
+    const user = await User.findById(id).populate("subscribers")
 
     if (!user) {
         throw new Error("User not found")

@@ -3,7 +3,7 @@
     <div class="col-12 mt-4">
       <h6>Komentari</h6>
 
-      <div class="comment-input d-flex mt-2">
+      <div class="comment-input d-flex mt-2" v-if="isLoggedIn()">
         <div class="logo">
           <img
             :src="'https://ui-avatars.com/api/?name='+user.username+'&background=random'"
@@ -23,7 +23,7 @@
     </div>
 
     <div class="comments">
-      <single-comment v-for="c in comments" :key="c._id" :data="c"></single-comment>
+      <single-comment v-for="c in comments" :key="c._id" :data="c" @edit="editComment" @delete="deleteComment"></single-comment>
     </div>
   </div>
 </template>
@@ -81,6 +81,36 @@ export default {
           console.log(err.response.data);
         });
     },
+    editComment(id, text) {
+      for (let i = 0; i < this.comments.length; i++) {
+        if (this.comments[i]._id == id) {
+          this.comments[i].text = text;
+          break;
+        }
+      }
+
+      axios.put(this.API_URL + "/video/comment/" + id, {
+        text,
+      }, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+    },
+    deleteComment(id) {
+      for (let i = 0; i < this.comments.length; i++) {
+        if (this.comments[i]._id == id) {
+          this.comments.splice(i, 1);
+          break;
+        }
+      }
+
+      axios.delete(this.API_URL + "/video/comment/" + id, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+    }
   },
   watch: {
     video() {

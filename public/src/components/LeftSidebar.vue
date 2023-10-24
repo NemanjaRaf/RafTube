@@ -12,13 +12,13 @@
                     </li>
                 </router-link>
 
-                <router-link to="/upload">
+                <router-link to="/upload" v-if="isLoggedIn()">
                     <li class="nav-item">
                         <font-awesome-icon :icon="['fas', 'upload']" /> Upload Video
                     </li>
                 </router-link>
 
-                <router-link to="/channel">
+                <router-link to="/channel" v-if="isLoggedIn()">
                     <li class="nav-item">
                         <font-awesome-icon :icon="['fas', 'user']" /> Your Channel
                     </li>
@@ -34,18 +34,28 @@
         </div>
         <div class="divider"></div>
         <div class="nav">
-            <ul>
+            <ul v-if="isLoggedIn()">
                 <li class="nav-item">
                     <font-awesome-icon :icon="['fas', 'list']" /> Your Library
                 </li>
                 <PlaylistItem v-for="p in playlists" :key="p._id" :data="p"></PlaylistItem>
             </ul>
-            <ul>
+            <ul v-if="isLoggedIn()">
+                <li class="nav-item">
+                    <font-awesome-icon :icon="['fas', 'list']" /> Following
+                </li>
+                <PlaylistItem v-for="f in following" :key="f._id" :data="f"></PlaylistItem>
+            </ul>
+            <ul v-if="isLoggedIn()">
                 <li class="nav-item">
                     <font-awesome-icon :icon="['fas', 'user-astronaut']" /> Your Subscriptions
                 </li>
                 <subscriptions-item v-for="s in subscriptions" :key="s._id" :data="s"></subscriptions-item>
             </ul>
+
+            <router-link :to="'/login'" class="down btn btn-primary" v-if="!isLoggedIn()">
+                Login
+            </router-link>
         </div>
     </div>
 </template>
@@ -69,7 +79,8 @@
             return {
                 admin: false,
                 subscriptions: [],
-                playlists: []
+                playlists: [],
+                following: []
             }
         },
         methods: {
@@ -106,7 +117,8 @@
                         Authorization: 'Bearer ' + localStorage.getItem('token')
                     }
                 }).then(res => {
-                    this.playlists = res.data.data;
+                    this.playlists = res.data.data.playlistsByAuthor;
+                    this.following = res.data.data.playlistsByFollower;
                 }).catch(err => {
                     console.log(err);
                 })
@@ -123,6 +135,7 @@
 <style>
 
 .sidemenu {
+    position: relative;
     background: #262626;
     height: 100vh;
     overflow-y: auto;
@@ -212,5 +225,16 @@
     width: 100%;
     height: 100%;
     margin-bottom: 0;
+}
+
+.sidemenu .down {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding: 10px 20px;
 }
 </style>

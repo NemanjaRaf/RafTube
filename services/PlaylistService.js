@@ -106,8 +106,9 @@ PlaylistService.unfollow = async (id, userId) => {
 }
 
 PlaylistService.listPlaylists = async (id) => {
-    console.log(id)
-    return await Playlist.find({ author: id }).populate("author")
+    const playlistsByAuthor = await Playlist.find({ author: id }).populate("author").populate('videos')
+    const playlistsByFollower = await Playlist.find({ followers: id }).populate("author").populate('videos')
+    return { playlistsByAuthor, playlistsByFollower }
 }
 
 PlaylistService.listFollowedPlaylists = async (id) => {

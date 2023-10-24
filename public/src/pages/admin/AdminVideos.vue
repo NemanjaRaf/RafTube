@@ -58,7 +58,7 @@ export default {
     },
     methods: {
         getVideos() {
-            axios.get('http://localhost:3000/api/video/search/100').then(response => {
+            axios.get(this.API_URL + '/video/search/100').then(response => {
                 this.videos = response.data.data
                 console.log(this.videos)
             }).catch(error => {

@@ -12,7 +12,7 @@
                     <div class="col-12 mt-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5>{{ video.title }}</h5>
-                            <div class="btn btn-blue btn-small" @click="libraryModal = true">Save video</div>
+                            <div class="btn btn-blue btn-small" @click="toggleModal">Save video</div>
                         </div>
                     
                         <div class="d-flex justify-content-between align-items-center mt-1">
@@ -133,7 +133,18 @@ export default {
                     console.log(err)
                 })
         },
+        toggleModal() {
+            if (!this.isLoggedIn()) {
+                this.$store.dispatch('showToast', { message: "You need to be logged in!", type: 'error' });
+                return
+            }
+            this.libraryModal = true
+        },
         like() {
+            if (!this.isLoggedIn()) {
+                this.$store.dispatch('showToast', { message: "You need to be logged in!", type: 'error' });
+                return
+            }
             axios.post(this.API_URL + '/video/like/' + this.video._id, {
 
             }, {
@@ -147,6 +158,10 @@ export default {
             })
         },
         dislike() {
+            if (!this.isLoggedIn()) {
+                this.$store.dispatch('showToast', { message: "You need to be logged in!", type: 'error' });
+                return
+            }
             axios.post(this.API_URL + '/video/dislike/' + this.video._id, {
 
             }, {
@@ -167,6 +182,10 @@ export default {
             })
         },
         subscribe() {
+            if (!this.isLoggedIn()) {
+                this.$store.dispatch('showToast', { message: "You need to be logged in!", type: 'error' });
+                return
+            }
             axios.post(this.API_URL + '/user/subscribe/' + this.video.channel._id, {}, {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('token')
@@ -179,6 +198,10 @@ export default {
             })
         },
         unsubscribe() {
+            if (!this.isLoggedIn()) {
+                this.$store.dispatch('showToast', { message: "You need to be logged in!", type: 'error' });
+                return
+            }
             axios.post(this.API_URL + '/user/unsubscribe/' + this.video.channel._id, {}, {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('token')

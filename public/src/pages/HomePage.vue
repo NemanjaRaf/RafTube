@@ -25,7 +25,7 @@ export default {
     },
     methods: {
         getVideos() {
-            axios.get('http://localhost:3000/api/video/search/100').then((res) => {
+            axios.get(this.API_URL + '/video/search/100').then((res) => {
                 this.videos = res.data.data
             }).catch((err) => {
                 this.$store.dispatch('showToast', { message: err.response.data.message, type: 'error' });

@@ -16,6 +16,7 @@ const AdminAddUser = () => import('@/pages/admin/AdminAddUser.vue');
 const AdminVideos = () => import('@/pages/admin/AdminVideos.vue');
 const AdminEditVideo = () => import('@/pages/admin/AdminEditVideo.vue');
 const AdminAddVideo = () => import('@/pages/admin/AdminAddVideo.vue');
+const Search = () => import('@/pages/SearchPage.vue');
 
 const Login = () => import('@/pages/LoginPage.vue');
 
@@ -27,6 +28,7 @@ const routes = [
   { path: '/channel/:id', component: Channel },
   { path: '/video/:id', component: VideoPage, props: true },
   { path: '/playlist/:id', component: PlaylistPage, props: true },
+  { path: '/search/:id', component: Search, props: true },
   { path: '/admin', component: AdminHome },
   { path: '/admin/users', component: AdminUsers },
   { path: '/admin/users/add', component: AdminAddUser },

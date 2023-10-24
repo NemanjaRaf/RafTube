@@ -57,7 +57,7 @@ export default {
     },
     methods: {
         getUser() {
-            axios.get('http://localhost:3000/api/user/' + this.$route.params.id, {
+            axios.get(this.API_URL + '/user/' + this.$route.params.id, {
                 headers: {
                     token: localStorage.getItem('token')
                 }
@@ -80,7 +80,7 @@ export default {
             if (this.password != '') {
                 data.password = this.password.trim()
             }
-            axios.put('http://localhost:3000/api/user/' + this.$route.params.id, data, {
+            axios.put(this.API_URL + '/user/' + this.$route.params.id, data, {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('token')
                 }

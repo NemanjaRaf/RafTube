@@ -60,7 +60,7 @@ export default {
     },
     methods: {
         getUsers() {
-            axios.get('http://localhost:3000/api/user/list')
+            axios.get(this.API_URL + '/user/list')
                 .then(response => {
                     this.users = response.data.data
                 })
@@ -69,7 +69,7 @@ export default {
                 })
         },
         deleteUser(id) {
-            axios.delete('http://localhost:3000/api/user/' + id, {
+            axios.delete(this.API_URL + '/user/' + id, {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('token')
                 }

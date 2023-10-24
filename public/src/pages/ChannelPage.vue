@@ -28,11 +28,18 @@
             </div>
             <div class="col-4">
                 <div class="card bg-light p-3">
-                    <h4>Playlists</h4>
+                    <h4>{{ user.username }}'s playlists</h4>
                     <div class="divider"></div>
                     <div class="row">
                         <div class="col-12">
-                            <playlist-preview v-for="p in playlists" :key="p._id" :data="p"></playlist-preview>
+                            <playlist-preview v-for="p in playlists" :key="p._id" :data="p" :horizontal="true"></playlist-preview>
+                        </div>
+                    </div>
+                    <h4 class="mt-3">{{ user.username }}'s subscriptions</h4>
+                    <div class="divider"></div>
+                    <div class="row">
+                        <div class="col-12">
+                            <subscriptions-item v-for="s in user.subscribers" :key="s._id" :data="s"></subscriptions-item>
                         </div>
                     </div>
                 </div>
@@ -46,8 +53,9 @@ import axios from 'axios'
 import PageTemplate from './PageTemplate.vue'
 import VideoPreview from '../components/VideoPreview.vue'
 import PlaylistPreview from '../components/PlaylistPreview.vue'
+import SubscriptionsItem from '../components/SubscriptionsItem.vue'
 export default {
-    components: { PageTemplate, VideoPreview, PlaylistPreview },
+    components: { PageTemplate, VideoPreview, PlaylistPreview, SubscriptionsItem },
     name: 'ChannelPage',
     data() {
         return {
@@ -74,9 +82,23 @@ export default {
                 .then(res => {
                     this.user = res.data.data
 
-                    const u = JSON.parse(localStorage.getItem('user'))
-                    if (u) {
-                        this.subscribed = this.user.subscribers.includes(u._id)
+                    if (this.isLoggedIn()) {
+                        console.log('subscribers', this.user.subscribers)
+                        const u = JSON.parse(localStorage.getItem('user'))
+                        let found = false;
+                        for (let i = 0; i < this.user.subscribers.length; i++) {
+                            if (this.user.subscribers[i]._id == u._id) {
+                                console.log('subscribed', this.user.subscribers[i]._id, u._id)
+                                this.subscribed = true
+                                found = true
+                                break
+                            }
+                        }
+                        if (!found) {
+                            this.subscribed = false
+                        }
+                    } else {
+                        this.subscribed = false
                     }
                 })
                 .catch(err => {
@@ -86,7 +108,7 @@ export default {
         getPlaylists() {
             axios.get(this.API_URL +  '/playlist/list/' + this.user_id)
                 .then(res => {
-                    this.playlists = res.data.data
+                    this.playlists = res.data.data.playlistsByAuthor
                     console.log('playlists', this.playlists)
                 })
                 .catch(err => {
