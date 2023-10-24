@@ -24,6 +24,9 @@ const s3 = new AWS.S3({
 });
 
 ffmpeg.setFfmpegPath(require('@ffmpeg-installer/ffmpeg').path);
+console.log(require('@ffmpeg-installer/ffmpeg').path);  
+console.log(process.geteuid());
+console.log("----------------------------")
 
 const upload = multer({
     storage: multer.memoryStorage(),
@@ -37,17 +40,19 @@ videoRouter.post('/upload', upload.single('video'), async (req, res) => {
         return res.status(400).send('No file uploaded.');
     }
 
+    console.log(os.tmpdir())
+
     const extension = req.file.originalname.split('.').pop();
     const videoID = uuidv4();
-    const thumbnailPath = path.join(os.tmpdir(), `${videoID}.png`);
+    const thumbnailPath = path.join('tmp/', `${videoID}.png`);
 
     // save req.file.buffer to temp folder
-    fs.writeFileSync(path.join(os.tmpdir(), `${videoID}.${extension}`), req.file.buffer);
+    fs.writeFileSync(path.join('tmp/', `${videoID}.${extension}`), req.file.buffer);
 
     ffmpeg()
-        .input(path.join(os.tmpdir(), `${videoID}.${extension}`))
+        .input(path.join('tmp/', `${videoID}.${extension}`))
         .screenshots({
-            timestamps: ['00:01.000'],
+            timestamps: ['00:00.000'],
             filename: thumbnailPath
         })
         .on('end', function() {
@@ -79,6 +84,10 @@ videoRouter.post('/upload', upload.single('video'), async (req, res) => {
                         return res.status(500).json({ success: false, message: err.message });
                     }
 
+                    // delete temp files
+                    fs.unlinkSync(path.join('tmp/', `${videoID}.${extension}`));
+                    fs.unlinkSync(path.join('tmp/', `${videoID}.png`));
+
                     res.status(200).json({ success: true, data: {
                         videoID: videoID,
                         videoExtension: extension,
@@ -87,6 +96,14 @@ videoRouter.post('/upload', upload.single('video'), async (req, res) => {
                     } });
                 });
             });
+        })
+        .on('error', function(err) {
+            console.log(err);
+            // return res.status(500).json({ success: false, message: err.message });
+        })
+        .on('stderr', function(err) {
+            console.log(err);
+            // return res.status(500).json({ success: false, message: err.message });
         });
 });
 

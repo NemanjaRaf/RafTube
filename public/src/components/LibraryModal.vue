@@ -90,7 +90,7 @@ export default {
                 Authorization: 'Bearer ' + localStorage.getItem('token')
             }
         }).then(res => {
-            this.playlists = res.data.data;
+            this.playlists = res.data.data.playlistsByAuthor;
         }).catch(err => {
             console.log(err);
         })

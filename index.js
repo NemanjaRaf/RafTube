@@ -23,25 +23,12 @@ app.use("/api/user", userRouter)
 app.use("/api/video", videoRouter)
 app.use("/api/playlist", playlistRouter)
 
-app.use(express.static("public"))
+app.use(express.static("public/dist"))
 
-app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/public/home.html")
+app.get("*", (req, res) => {
+    res.sendFile(__dirname + "/public/dist/index.html")
 })
 
-app.get("/upload", (req, res) => {
-    res.sendFile(__dirname + "/public/upload.html")
-})
-
-app.get("/video", (req, res) => {
-    res.sendFile(__dirname + "/public/video.html")
-})
-
-app.get("/channel", (req, res) => {
-    res.sendFile(__dirname + "/public/channel.html")
-})
-
-
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
+app.listen(8000, () => {
+    console.log("Server running on port 8000");
 })
