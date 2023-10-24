@@ -1,6 +1,9 @@
 <template>
   <div class="row topnav">
-    <div class="col-5">
+    <div class="col-1 bars center" @click="openMenu">
+      <font-awesome-icon :icon="['fas', 'bars']" />
+    </div>
+    <div class="col-9 col-sm-9 col-md-9 col-lg-5 col-xl-5">
       <div class="form-group with-btn">
         <input
           type="text"
@@ -52,9 +55,9 @@
 <script>
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSearch,faBars } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faSearch);
+library.add(faSearch,faBars);
 export default {
   name: "TopNavigation",
   components: {
@@ -76,6 +79,9 @@ export default {
     search() {
       this.$router.push("/search/" + this.query);
     },
+    openMenu() {
+      this.$emit("open");
+    },
   },
   created() {
     this.loggedIn = localStorage.getItem("token") ? true : false;
@@ -89,6 +95,9 @@ export default {
 <style>
 .topnav {
   margin-bottom: 20px;
+}
+.topnav .bars {
+  font-size: 1.7em;
 }
 .profile {
   height: 44px;

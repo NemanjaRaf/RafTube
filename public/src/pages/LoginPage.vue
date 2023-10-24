@@ -1,7 +1,7 @@
 <template>
     <page-template>
         <div class="row center mt-5">
-            <div class="col-4">
+            <div class="col-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
                 <div class="card bg-light p-3">
                     <div class="form-group">
                         <label for="">Email</label>

@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="row">
-                    <video-preview v-for="video in videos" :key="video._id" :small="true" :data="video"></video-preview>
+                    <video-preview v-for="video in videos" :key="video._id" :col="'col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3'" :data="video"></video-preview>
                 </div>
             </div>
         </div>

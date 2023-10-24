@@ -21,12 +21,12 @@
         <div class="divider mt-2 mb-4"></div>
 
         <div class="row">
-            <div class="col-8">
+            <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
                 <div class="row">
-                    <video-preview v-for="v in videos" :key="v._id" :col="'col-4'" :data="v"></video-preview>
+                    <video-preview v-for="v in videos" :key="v._id" :col="'col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3'" :data="v"></video-preview>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
                 <div class="card bg-light p-3">
                     <h4>{{ user.username }}'s playlists</h4>
                     <div class="divider"></div>

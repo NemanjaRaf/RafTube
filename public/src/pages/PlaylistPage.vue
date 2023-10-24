@@ -1,7 +1,7 @@
 <template>
   <page-template>
     <div class="row">
-      <div class="col-3 left-metadata">
+      <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 left-metadata mb-3">
         <div class="card bg-light p-3">
           <h3>{{ playlist.title }}</h3>
 
@@ -54,7 +54,7 @@
           </div>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
         <video-preview
           v-for="v in videos"
           :key="v._id"

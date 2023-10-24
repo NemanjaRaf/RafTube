@@ -242,8 +242,9 @@ a {
 .video-preview .thumbnail video {
   width: 100%;
   height: 200px;
-  object-fit: fill;
+  object-fit: contain;
   border-radius: 10px;
+  background: black
 }
 
 

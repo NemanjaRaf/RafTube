@@ -1,7 +1,14 @@
 <template>
     <div class="sidemenu">
-        <div class="logo">
-            <img src="/logo/logo-no-background.png" alt="">
+        <div class="d-flex">
+            <div class="col-6">
+                <div class="logo">
+                    <img src="/logo/logo-no-background.png" alt="">
+                </div>
+            </div>
+            <div class="col-6 center">
+                <font-awesome-icon :icon="['fas', 'times']" class="close-btn" @click="closeMenu"/>
+            </div>
         </div>
 
         <div class="nav">
@@ -53,7 +60,7 @@
                 <subscriptions-item v-for="s in subscriptions" :key="s._id" :data="s"></subscriptions-item>
             </ul>
 
-            <router-link :to="'/login'" class="down btn btn-primary" v-if="!isLoggedIn()">
+            <router-link :to="'/login'" class="down btn btn-primary" v-if="!isLoggedIn()" @click="closeMenu()">
                 Login
             </router-link>
         </div>
@@ -65,10 +72,10 @@
     import SubscriptionsItem from './SubscriptionsItem.vue'
     import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
     import { library } from '@fortawesome/fontawesome-svg-core';
-    import { faHome, faUpload, faUser, faList, faUserAstronaut } from '@fortawesome/free-solid-svg-icons';
+    import { faHome, faUpload, faUser, faList, faUserAstronaut, faTimes } from '@fortawesome/free-solid-svg-icons';
     import PlaylistItem from './PlaylistItem.vue';
 
-    library.add(faHome, faUpload, faUser, faList, faUserAstronaut);
+    library.add(faHome, faUpload, faUser, faList, faUserAstronaut, faTimes);
     
     export default {
         name: 'LefSidebar',
@@ -122,7 +129,10 @@
                 }).catch(err => {
                     console.log(err);
                 })
-            }
+            },
+            closeMenu() {
+                this.$emit('close');
+            },
         },
         created() {
             this.checkAdmin()
@@ -167,6 +177,13 @@
     padding: 15px 20px;
     border-radius: 10px;
     transition: background 0.2s ease-in-out;
+}
+
+.sidemenu .close-btn {
+    font-size: 1.5em;
+    float: right;
+    margin-left: auto;
+    margin-right: 20px;
 }
 
 .sidemenu .nav .nav-item.muted {

@@ -10,7 +10,7 @@
                         <form action="">
 
                             <div class="row">
-                                <div class="col-5">
+                                <div class="col-12 col-sm-12 col-md-12 col-lg-5 col-xl-5">
                                     <div class="row">
                                         <div class="form-group">
                                             <label for="">Title</label>
@@ -24,10 +24,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-2"></div>
+                                <div class="col-2 mb-3"></div>
 
 
-                                <div class="col-4">
+                                <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="card bg-dark video-upload">

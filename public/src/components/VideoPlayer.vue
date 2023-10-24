@@ -19,5 +19,26 @@ export default {
 </script>
 
 <style>
+video {
+    width: 100%;
+    height: 630px;
+    background: black;
+}
+@media screen and (max-width: 1400px) {
+    video {
+        height: 450px;
+    }
+}
+@media screen and (max-width: 760px) {
+    video {
+        height: 350px;
+    }
+}
+@media screen and (max-width: 500px) {
+    video {
+        height: 250px;
+    }
+}
+
 
 </style>
