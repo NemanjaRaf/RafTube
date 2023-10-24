@@ -20,7 +20,7 @@ Vue.mixin({
   },
   data() {
     return {
-      API_URL: 'http://localhost:3000/api',
+      API_URL: 'https://185.182.8.150:3000/api',
       CLOUD_URL: 'https://raftube.fra1.cdn.digitaloceanspaces.com/',
       isLoggedIn: function () {
         const token = localStorage.getItem('token');
