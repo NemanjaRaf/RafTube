@@ -65,4 +65,12 @@ export default {
         overflow-y: auto;
     }
 }
+@media screen and (min-width: 768px) {
+    .bars {
+        display: none !important;
+    }
+    .close-btn {
+        display: none !important;
+    }
+}
 </style>
