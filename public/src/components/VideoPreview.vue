@@ -4,6 +4,8 @@
     :to="'/video/' + data._id"
     @mouseenter.native="loadVideo"
     @mouseleave.native="unloadVideo"
+    @touchstart.native="loadVideo"
+    @touchend.native="unloadVideo"
   >
     <div :class="{ card: true, 'video-preview': true, horizontal: horizontal }">
       <div class="thumbnail">
