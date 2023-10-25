@@ -56,7 +56,7 @@ export default {
         height: 100vh;
         width: 100%;
         top: 0;
-        transition: left 0.8s ease;
+        transition: left 0.6s ease;
         overflow-x: hidden;
     }
 

@@ -19,8 +19,10 @@
           :poster="CLOUD_URL + 'thumbnails/' + data.thumbnailUrl"
           @load="imageLoad"
           @loadeddata="imageLoad"
+          @loadedmetadata="imageLoad"
           muted
           loop
+          playsinline
           preload="metadata"
         >
           <source
