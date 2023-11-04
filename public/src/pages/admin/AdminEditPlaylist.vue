@@ -38,7 +38,7 @@
 
                 <div class="row mt-3">
                     <div class="col">
-                        <div class="btn btn-blue" @click="updateVideo">Update</div>
+                        <div class="btn btn-blue" @click="updatePlaylist">Update</div>
                     </div>
                 </div>
             </div>
@@ -52,7 +52,7 @@ import AdminNav from '../../components/AdminNav.vue'
 import PageTemplate from '../PageTemplate.vue'
 export default {
   components: { PageTemplate, AdminNav },
-    name: 'AdminEditUser',
+    name: 'AdminEditPlaylist',
     data() {
         return {
             title: '',
@@ -62,16 +62,15 @@ export default {
         }
     },
     methods: {
-        getVideo() {
-            axios.get(this.API_URL + '/video/' + this.$route.params.id, {
+        getPlaylist() {
+            axios.get(this.API_URL + '/playlist/' + this.$route.params.id, {
                 headers: {
                     token: localStorage.getItem('token')
                 }
             }).then((res) => {
-                console.log('sadsadsa', res.data.data)
                 this.title = res.data.data.title
                 this.desc = res.data.data.description
-                this.owner = res.data.data.channel._id
+                this.owner = res.data.data.author._id
             }).catch((err) => {
                 this.$store.dispatch('showToast', { message: err.response.data.message, type: 'error' });
             })
@@ -88,7 +87,7 @@ export default {
                 this.$store.dispatch('showToast', { message: err.response.data.message, type: 'error' });
             })
         },
-        updateVideo() {
+        updatePlaylist() {
             let data = {}
             if (this.title != '') {
                 data.title = this.title.trim()
@@ -97,22 +96,22 @@ export default {
                 data.description = this.desc.trim()
             }
             if (this.owner != '') {
-                data.channel = this.owner.trim()
+                data.author = this.owner.trim()
             }
 
-            axios.put(this.API_URL + '/video/' + this.$route.params.id, data, {
+            axios.put(this.API_URL + '/playlist/' + this.$route.params.id, data, {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('token')
                 }
             }).then(() => {
-                this.$store.dispatch('showToast', { message: 'Video updated successfully.', type: 'success' });
+                this.$store.dispatch('showToast', { message: 'Playlist updated successfully.', type: 'success' });
             }).catch((err) => {
-               this.$store.dispatch('showToast', { message: err.response.data.message, type: 'error' });
+                this.$store.dispatch('showToast', { message: err.response.data.message, type: 'error' });
             })
         }
     },
     mounted() {
-        this.getVideo()
+        this.getPlaylist()
         this.getAllUsers()
     }
 }

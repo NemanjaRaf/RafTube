@@ -13,6 +13,7 @@ const VideoService = require('../services/VideoService');
 const { Authenticate, checkAccess, checkAccessVideo, checkAccessComment, AuthenticateOptional } = require('../middlewares/Authenticate');
 const validate = require("../middlewares/ValidateMiddleware")
 const VideoValidation = require('../validations/VideoValidation');
+const CommentService = require('../services/CommentService');
 
 const videoRouter = express.Router();
 
@@ -24,9 +25,6 @@ const s3 = new AWS.S3({
 });
 
 ffmpeg.setFfmpegPath(require('@ffmpeg-installer/ffmpeg').path);
-console.log(require('@ffmpeg-installer/ffmpeg').path);  
-console.log(process.geteuid());
-console.log("----------------------------")
 
 const upload = multer({
     storage: multer.memoryStorage(),
@@ -46,7 +44,6 @@ videoRouter.post('/upload', upload.single('video'), async (req, res) => {
     const videoID = uuidv4();
     const thumbnailPath = path.join('tmp/', `${videoID}.png`);
 
-    // save req.file.buffer to temp folder
     fs.writeFileSync(path.join('tmp/', `${videoID}.${extension}`), req.file.buffer);
 
     ffmpeg()
@@ -84,7 +81,6 @@ videoRouter.post('/upload', upload.single('video'), async (req, res) => {
                         return res.status(500).json({ success: false, message: err.message });
                     }
 
-                    // delete temp files
                     fs.unlinkSync(path.join('tmp/', `${videoID}.${extension}`));
                     fs.unlinkSync(path.join('tmp/', `${videoID}.png`));
 
@@ -188,6 +184,23 @@ videoRouter.get("/subscriptions/", Authenticate, async (req, res) => {
     })
 })
 
+videoRouter.get("/comment/list", async (req, res) => {
+    CommentService.listComments().then((comment) => {
+        res.status(200).json({ success: true, data: comment })
+    }).catch((err) => {
+        res.status(500).json({ success: false, message: err.message })
+    })
+})
+
+videoRouter.get("/comment/single/:id", async (req, res) => {
+    CommentService.getComment(req.params.id).then((comment) => {
+        res.status(200).json({ success: true, data: comment })
+    }).catch((err) => {
+        res.status(500).json({ success: false, message: err.message })
+    })
+})
+
+
 videoRouter.get("/comment/:id", async (req, res) => {
     VideoService.listComments(req.params.id).then((comment) => {
         res.status(200).json({ success: true, data: comment })
@@ -228,7 +241,6 @@ videoRouter.post('/view/:id', AuthenticateOptional, async (req, res) => {
         res.status(500).json({ success: false, message: err.message });
     });
 })
-
 
 module.exports = {
     videoRouter,

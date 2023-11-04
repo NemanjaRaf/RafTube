@@ -1,7 +1,32 @@
 const Comment = require('../models/Comment');
+const Video = require('../models/Video');
 
 const CommentService = new Object();
 
+CommentService.listComments = async () => {
+    const videos = await Video.find({}, 'title comments').populate({
+        path: 'comments',
+        populate: {
+            path: 'author',
+            select: 'username',
+        },
+    });
+
+    let comments = []
+    videos.forEach(video => {
+        video.comments.forEach(comment => {
+            comment.video = video.title
+            comments.push({
+                _id: comment._id,
+                text: comment.text,
+                video: comment.video,
+                author: comment.author,
+            })
+        })
+    })
+
+    return comments;
+};
 CommentService.createComment = async (data) => {
     const comment = new Comment({
         text: data.body.text,

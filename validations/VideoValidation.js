@@ -14,10 +14,12 @@ VideoValidation.updateVideo = Joi.object({
     description: Joi.string().max(500).optional(),
     videoUrl: Joi.string().optional(),
     thumbnailUrl: Joi.string().optional(),
+    channel: Joi.string().optional(),
 });
 
 VideoValidation.comment = Joi.object({
     text: Joi.string().min(3).max(500).required(),
+    author: Joi.string().optional(),
 });
 
 module.exports = VideoValidation;

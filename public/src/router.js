@@ -16,6 +16,10 @@ const AdminAddUser = () => import('@/pages/admin/AdminAddUser.vue');
 const AdminVideos = () => import('@/pages/admin/AdminVideos.vue');
 const AdminEditVideo = () => import('@/pages/admin/AdminEditVideo.vue');
 const AdminAddVideo = () => import('@/pages/admin/AdminAddVideo.vue');
+const AdminComments = () => import('@/pages/admin/AdminComments.vue');
+const AdminEditComment = () => import('@/pages/admin/AdminEditComment.vue');
+const AdminPlaylists = () => import('@/pages/admin/AdminPlaylists.vue');
+const AdminEditPlaylist = () => import('@/pages/admin/AdminEditPlaylist.vue');
 const Search = () => import('@/pages/SearchPage.vue');
 
 const Login = () => import('@/pages/LoginPage.vue');
@@ -36,6 +40,10 @@ const routes = [
   { path: '/admin/videos', component: AdminVideos },
   { path: '/admin/videos/add', component: AdminAddVideo },
   { path: '/admin/videos/:id', component: AdminEditVideo, props: true },
+  { path: '/admin/comments', component: AdminComments },
+  { path: '/admin/comments/:id', component: AdminEditComment, props: true },
+  { path: '/admin/playlists', component: AdminPlaylists },
+  { path: '/admin/playlists/:id', component: AdminEditPlaylist, props: true },
   { path: '*', component: NotFound }
 ];
 

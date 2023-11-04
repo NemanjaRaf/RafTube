@@ -35,7 +35,7 @@
                             <playlist-preview v-for="p in playlists" :key="p._id" :data="p" :horizontal="true"></playlist-preview>
                         </div>
                     </div>
-                    <h4 class="mt-3">{{ user.username }}'s subscriptions</h4>
+                    <h4 class="mt-3">{{ user.username }}'s subscribers</h4>
                     <div class="divider"></div>
                     <div class="row">
                         <div class="col-12">

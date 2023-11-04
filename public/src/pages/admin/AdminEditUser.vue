@@ -66,7 +66,7 @@ export default {
                 this.username = res.data.data.username
                 this.email = res.data.data.email
             }).catch((err) => {
-                alert(err.response.data.message)
+                this.$store.dispatch('showToast', { message: err.response.data.message, type: 'error' });
             })
         },
         updateUser() {
@@ -84,11 +84,10 @@ export default {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('token')
                 }
-            }).then((res) => {
-                console.log(res.data)
-                alert('User updated successfully.')
+            }).then(() => {
+                this.$store.dispatch('showToast', { message: 'User updated successfully.', type: 'success' });
             }).catch((err) => {
-                alert(err.response.data.message)
+                this.$store.dispatch('showToast', { message: err.response.data.message, type: 'error' });
             })
         }
     },

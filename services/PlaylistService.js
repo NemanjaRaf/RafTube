@@ -34,6 +34,10 @@ PlaylistService.deletePlaylist = async (id) => {
     return true
 }
 
+PlaylistService.listAll = async () => {
+    return await Playlist.find().populate("author")
+}
+
 PlaylistService.getPlaylist = async (id) => {
     
     return await Playlist.findById(id).populate("author").populate({

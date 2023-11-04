@@ -7,7 +7,7 @@
 
                 <div class="row">
                     <div class="col-md-6">
-                        <h3>Videos</h3>
+                        <h3>Comments</h3>
                     </div>
 
                     <!-- <div class="col-md-6">
@@ -20,26 +20,26 @@
                 <table class="table table-striped mt-3">
                     <thead>
                         <tr>
-                            <th>Title</th>
-                            <th>Description</th>
                             <th>Channel</th>
+                            <th>Video</th>
+                            <th>Comment</th>
                             <th style="text-align:center">Actions</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        <tr v-for="video in videos" :key="video._id">
-                            <td>{{ video.title }}</td>
+                        <tr v-for="comm in comments" :key="comm._id">
                             <td class="td-user">
-                                <img :src="'https://ui-avatars.com/api/?name='+video.channel.username+'&background=random'">
-                                {{ video.channel.username }}
+                                <img :src="'https://ui-avatars.com/api/?name='+comm.author.username+'&background=random'">
+                                {{ comm.author.username }}
                             </td>
-                            <td>{{ video.description }}</td>
+                            <td>{{ comm.video }}</td>
+                            <td>{{ comm.text }}</td>
                             <td style="text-align:center">
-                                <router-link :to="'/admin/videos/' + video._id">
+                                <router-link :to="'/admin/comments/' + comm._id">
                                     <button class="btn btn-green">Edit</button>
                                 </router-link>
-                                <button class="btn btn-primary ml-1" @click="deleteVideo(video._id)">Delete</button>
+                                <button class="btn btn-primary ml-1" @click="deleteComment(comm._id)">Delete</button>
                             </td>
                         </tr>
                     </tbody>
@@ -55,36 +55,35 @@ import PageTemplate from '../PageTemplate.vue'
 import AdminNav from '../../components/AdminNav.vue'
 export default {
   components: { PageTemplate, AdminNav },
-    name: 'AdminVideos',
+    name: 'AdminComments',
     data() {
         return {
-            videos: []
+            comments: []
         }
     },
     methods: {
-        getVideos() {
-            axios.get(this.API_URL + '/video/search/100').then(response => {
-                this.videos = response.data.data
-                console.log(this.videos)
+        getComments() {
+            axios.get(this.API_URL + '/video/comment/list').then(response => {
+                this.comments = response.data.data
             }).catch(error => {
                 this.$store.dispatch('showToast', { message: error.response.data.message, type: 'error' });
             })
         },
-        deleteVideo(id) {
-            axios.delete(this.API_URL + '/video/' + id, {
+        deleteComment(id) {
+            axios.delete(this.API_URL + '/video/comment/' + id, {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('token')
                 }
             }).then(() => {
-                this.$store.dispatch('showToast', { message: 'Video deleted', type: 'success' });
-                this.getVideos()
+                this.$store.dispatch('showToast', { message: 'Comment deleted', type: 'success' });
+                this.getComments()
             }).catch(error => {
                 this.$store.dispatch('showToast', { message: error.response.data.message, type: 'error' });
             })
         }
     },
     mounted() {
-        this.getVideos()
+        this.getComments()
     }
 }
 </script>
