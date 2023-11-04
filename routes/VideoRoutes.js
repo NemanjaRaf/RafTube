@@ -29,7 +29,7 @@ ffmpeg.setFfmpegPath(require('@ffmpeg-installer/ffmpeg').path);
 const upload = multer({
     storage: multer.memoryStorage(),
     limits: {
-        fileSize: 50 * 1024 * 1024 // limit to 50MB
+        fileSize: 80 * 1024 * 1024 // limit to 80MB
     }
 });
 
@@ -49,7 +49,7 @@ videoRouter.post('/upload', upload.single('video'), async (req, res) => {
     ffmpeg()
         .input(path.join('tmp/', `${videoID}.${extension}`))
         .screenshots({
-            timestamps: ['00:00.000'],
+            timestamps: ['00:01.500'],
             filename: thumbnailPath
         })
         .on('end', function() {

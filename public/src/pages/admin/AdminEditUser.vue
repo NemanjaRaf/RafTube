@@ -32,6 +32,18 @@
                 </div>
 
                 <div class="row mt-3">
+                    <div class="col-3">
+                        <div class="form-group">
+                            <label>Password</label>
+                            <select v-model="type">
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
                     <div class="col">
                         <div class="btn btn-blue" @click="updateUser">Update</div>
                     </div>
@@ -52,7 +64,8 @@ export default {
         return {
             username: '',
             email: '',
-            password: ''
+            password: '',
+            type: ''
         }
     },
     methods: {
@@ -65,6 +78,7 @@ export default {
                 console.log(res.data)
                 this.username = res.data.data.username
                 this.email = res.data.data.email
+                this.type = res.data.data.type
             }).catch((err) => {
                 this.$store.dispatch('showToast', { message: err.response.data.message, type: 'error' });
             })
@@ -79,6 +93,9 @@ export default {
             }
             if (this.password != '') {
                 data.password = this.password.trim()
+            }
+            if (this.type != '') {
+                data.type = this.type.trim()
             }
             axios.put(this.API_URL + '/user/' + this.$route.params.id, data, {
                 headers: {
