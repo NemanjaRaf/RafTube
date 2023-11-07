@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import moment from 'moment';
 import BootstrapVue from 'bootstrap-vue'
+import VueSocketIO from 'vue-socket.io';
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
@@ -9,6 +10,7 @@ import router from './router'
 import store from './store'
 
 import './global.css'
+import { API_URL, CLOUD_URL, LOGIN_URL, SOCKET_URL } from './config';
 
 Vue.config.productionTip = false
 
@@ -20,8 +22,10 @@ Vue.mixin({
   },
   data() {
     return {
-      API_URL: 'https://nemanja02.com/api',
-      CLOUD_URL: 'https://raftube.fra1.cdn.digitaloceanspaces.com/',
+      API_URL: API_URL,
+      SOCKET_URL: SOCKET_URL,
+      CLOUD_URL: CLOUD_URL,
+      LOGIN_URL: LOGIN_URL,
       isLoggedIn: function () {
         const token = localStorage.getItem('token');
         if (!token) return null;
@@ -41,6 +45,9 @@ Vue.mixin({
   }
 })
 
+Vue.use(new VueSocketIO({
+  connection: SOCKET_URL,
+}));
 Vue.use(BootstrapVue);
 
 new Vue({

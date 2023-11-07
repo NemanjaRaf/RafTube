@@ -1,7 +1,7 @@
 const express = require("express")
 const cors = require("cors")
 const mongoose = require("mongoose")
-const { MONGO_URL } = require("./config")
+const { MONGO_URL, API_PORT } = require("./config")
 
 const { userRouter } = require("./routes/UserRoutes")
 const { videoRouter } = require("./routes/VideoRoutes")
@@ -29,6 +29,6 @@ app.get("*", (req, res) => {
     res.sendFile(__dirname + "/public/dist/index.html")
 })
 
-app.listen(8000, () => {
-    console.log("Server running on port 8000");
+app.listen(API_PORT, () => {
+    console.log("Server running on port " + API_PORT);
 })

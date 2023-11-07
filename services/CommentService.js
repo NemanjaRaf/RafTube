@@ -36,6 +36,15 @@ CommentService.createComment = async (data) => {
     return await comment.save();
 }
 
+CommentService.createCommentSocket = async (data) => {
+    const comment = new Comment({
+        text: data.text,
+        video: data.video,
+        author: data.user,
+    });
+    return await comment.save();
+}
+
 CommentService.deleteComment = async (id) => {
     await Comment.findByIdAndDelete(id);
 

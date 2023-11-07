@@ -35,7 +35,7 @@ export default {
     },
     methods: {
         login() {
-            axios.post(this.API_URL + '/user/login', {
+            axios.post(this.LOGIN_URL + '/login', {
                 email: this.email,
                 password: this.password
             }).then((res) => {

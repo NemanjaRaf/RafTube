@@ -46,29 +46,49 @@ export default {
       comments: [],
       comment: "",
       user: JSON.parse(localStorage.getItem("user")),
+      socket: null
     };
   },
-  created() {
+  mounted() {
     this.getComments();
+  },
+  sockets: {
+    connect() {
+      console.log('socket connected');
+    },
+    'newComment'(data) {
+      console.log('new comment', data);
+      this.comments.unshift(data);
+
+      console.log(this.comments);
+    },
+    'deleteComment'(data) {
+      console.log('delete comment', data);
+      for (let i = 0; i < this.comments.length; i++) {
+        if (this.comments[i]._id == data) {
+          this.comments.splice(i, 1);
+          break;
+        }
+      }
+    },
+    'updateComment'(data) {
+      console.log('update comment', data);
+      for (let i = 0; i < this.comments.length; i++) {
+        if (this.comments[i]._id == data._id) {
+          this.comments[i].text = data.text;
+          break;
+        }
+      }
+    }
   },
   methods: {
     addComment() {
-      axios
-        .post(this.API_URL + "/video/comment/" + this.video._id, {
-          text: this.comment,
-        }, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        })
-        .then((res) => {
-          console.log(res.data);
-          this.comment = "";
-          this.getComments();
-        })
-        .catch((err) => {
-          console.log(err.response.data);
-        });
+      this.$socket.emit('newComment', {
+        text: this.comment,
+        video: this.video._id,
+        user: this.user._id
+      });
+      this.comment = '';
     },
     getComments() {
       axios
@@ -82,34 +102,15 @@ export default {
         });
     },
     editComment(id, text) {
-      for (let i = 0; i < this.comments.length; i++) {
-        if (this.comments[i]._id == id) {
-          this.comments[i].text = text;
-          break;
+      this.$socket.emit('updateComment', {
+        id: id,
+        data: {
+          text: text
         }
-      }
-
-      axios.put(this.API_URL + "/video/comment/" + id, {
-        text,
-      }, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
+      });
     },
     deleteComment(id) {
-      for (let i = 0; i < this.comments.length; i++) {
-        if (this.comments[i]._id == id) {
-          this.comments.splice(i, 1);
-          break;
-        }
-      }
-
-      axios.delete(this.API_URL + "/video/comment/" + id, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
+      this.$socket.emit('deleteComment', id);
     }
   },
   watch: {

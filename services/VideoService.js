@@ -1,4 +1,6 @@
 const Video = require('../models/Video');
+const Comment = require('../models/Comment');
+const User = require('../models/User');
 const CommentService = require('./CommentService');
 
 const VideoService = new Object();
@@ -141,6 +143,23 @@ VideoService.addComment = async (id, data) => {
     return comment;
 }
 
+VideoService.addCommentSocket = async (id, data) => {
+    const video = await Video.findById(id);
+
+    if (!video) {
+        throw new Error('Video not found');
+    }
+
+    const comment = await CommentService.createCommentSocket(data);
+
+    video.comments.push(comment._id);
+
+    await video.save();
+
+    const populatedComment = await Comment.findById(comment._id).populate('author');
+    return populatedComment;
+}
+
 VideoService.removeComment = async (commentId) => {
     const video = await Video.findOne({ comments: commentId });
 
@@ -154,7 +173,7 @@ VideoService.removeComment = async (commentId) => {
 }
 
 VideoService.updateComment = async (commentId, data) => {
-    await CommentService.updateComment(commentId, data);
+    return await CommentService.updateComment(commentId, data);
 }
 
 VideoService.listComments = async (id) => {
